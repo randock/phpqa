@@ -3,7 +3,7 @@
 namespace Edge\QA\Tools\Analyzer;
 
 use Edge\QA\OutputMode;
-use Edge\QA\Tools\GetVersions;
+use Symfony\Component\Process\Process;
 
 class Phpstan extends \Edge\QA\Tools\Tool
 {
@@ -52,7 +52,7 @@ class Phpstan extends \Edge\QA\Tools\Tool
 
         $phpstanConfig = "# Configuration generated in phpqa\n" . \Nette\Neon\Neon::encode($config);
         $neonFile = $this->saveDynamicConfig($phpstanConfig, 'neon');
-
+        $this->getErrorFormatOption();
         return array(
             'analyze',
             'ansi' => '',
@@ -63,10 +63,26 @@ class Phpstan extends \Edge\QA\Tools\Tool
         );
     }
 
+    /**
+     * @return string
+     */
     private function getErrorFormatOption()
     {
-        $versions = new GetVersions();
-        $phsptanVersion = $versions->getToolVersion(self::$SETTINGS);
+        $phsptanVersion = $this->getVersion();
+
         return $phsptanVersion && version_compare($phsptanVersion, '0.10.3', '<') ?  'errorFormat' : 'error-format';
+    }
+
+    /**
+     * @return string|string[]
+     */
+    private function getVersion()
+    {
+        $command = ['phpstan', '--version'];
+        $process = new Process($command);
+        $process->run();
+        $firstLine = strtok($process->getOutput(), "\n");
+
+        return str_replace('PHPStan - PHP Static Analysis Tool ', '', $firstLine);
     }
 }
