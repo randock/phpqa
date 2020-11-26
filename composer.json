@@ -31,7 +31,8 @@
         "pdepend/pdepend": "*",
         "sebastian/phpcpd": "*",
         "squizlabs/php_codesniffer": "*",
-        "phpmetrics/phpmetrics": "*"
+        "phpmetrics/phpmetrics": "*",
+        "phpstan/phpstan": ">0.10.3"
     },
     "suggest": {
         "sensiolabs/security-checker": "Check composer.lock for known security issues",
